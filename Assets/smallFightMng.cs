@@ -23,7 +23,6 @@ public class smallFightMng : MonoBehaviour {
 	enemy enemyScript;
 	hero heroScript;
 
-	// Use this for initialization
 	void Start () {
 
 		echange_coups = false;
@@ -39,10 +38,7 @@ public class smallFightMng : MonoBehaviour {
 	public List<GameObject> Encounter_exists() {
 
 		//creating null list to return false
-		//GameObject null_GO = null;
 		List<GameObject> encounter_units = new List<GameObject> ();
-		//null_list.Add (null_GO);
-		//null_list.Add (null_GO);
 
 		foreach (GameObject hero_it in moveMngScript.allHeroes) {
 
@@ -187,54 +183,67 @@ public class smallFightMng : MonoBehaviour {
 			
 	}
 
+	void move_in() {
+
+		enemyScript = fighting_enemy.GetComponent ("enemy") as enemy;
+		heroScript = fighting_hero.GetComponent ("hero") as hero;
+
+		if (attacker.transform.position == target.transform.position) {
+
+			// modify HP values
+			if (target == foe_f) {
+
+				enemyScript.hitPoints = enemyScript.hitPoints - heroScript.str;
+
+			} else if (target == hero_f) {
+
+				heroScript.hitPoints = heroScript.hitPoints - enemyScript.str;
+
+			}
+
+			hero_hpTxt.text = "HP: " + heroScript.hitPoints;
+			foe_hpTxt.text = "HP: " + enemyScript.hitPoints;
+
+			moving_out = true;
+			moving_in = false;
+
+		}
+
+		attacker.transform.position = Vector3.Lerp (attacker.transform.position, target.transform.position,15*Time.deltaTime); // move in
+
+	}
+
+	void move_out() {
+
+		enemyScript = fighting_enemy.GetComponent ("enemy") as enemy;
+		heroScript = fighting_hero.GetComponent ("hero") as hero;
+
+		if (attacker.transform.position == attacker_initial_pos) {
+
+			moving_out = false;
+			alterner_coups ();
+
+		}
+
+		attacker.transform.position = Vector3.Lerp (attacker.transform.position, attacker_initial_pos,15*Time.deltaTime); // move out
+
+	}
+
 	// attack rotation in this update
-	//TODO: mettre dans des fonctions
 	void Update () {
 
 		if (moving_in) {
 
-			enemyScript = fighting_enemy.GetComponent ("enemy") as enemy;
-			heroScript = fighting_hero.GetComponent ("hero") as hero;
-			
-			if (attacker.transform.position == target.transform.position) {
+			move_in ();
+		
+		}
 
-				// modify HP values
-				if (target == foe_f) {
-
-					enemyScript.hitPoints = enemyScript.hitPoints - heroScript.str;
-
-				} else if (target == hero_f) {
-					
-					heroScript.hitPoints = heroScript.hitPoints - enemyScript.str;
-
-				}
-
-				hero_hpTxt.text = "HP: " + heroScript.hitPoints;
-				foe_hpTxt.text = "HP: " + enemyScript.hitPoints;
-
-				moving_out = true;
-				moving_in = false;
-
-
-			}
-
-			attacker.transform.position = Vector3.Lerp (attacker.transform.position, target.transform.position,15*Time.deltaTime); // move in
-
-		} else if (moving_out) {
-			
-			enemyScript = fighting_enemy.GetComponent ("enemy") as enemy;
-			heroScript = fighting_hero.GetComponent ("hero") as hero;
-
-			if (attacker.transform.position == attacker_initial_pos) {
-
-				moving_out = false;
-				alterner_coups ();
-
-			}
-
-			attacker.transform.position = Vector3.Lerp (attacker.transform.position, attacker_initial_pos,15*Time.deltaTime); // move out
+		 else if (moving_out) {
+				
+			move_out ();
 
 		}
+
 	}
 
 }
